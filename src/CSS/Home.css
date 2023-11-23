@@ -23,25 +23,28 @@
     padding-bottom: 5px;
     border-radius: 20px;
     border-color: #52565B;
-    border-style:groove;
+    border-style: groove;
 }
 
 .allNotes {
-    width: 90%; 
-    margin-top: 20px; 
+    width: 90%;
+    margin-top: 20px;
     padding: 20px;
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center; /* Center align notes */
 }
 
 .note {
     border-radius: 20px;
     border-color: #52565B;
-    border-style:groove;
+    border-style: groove;
     margin-left: 25px;
     width: 40%;
-    min-height: 150px; 
+    max-width: 300px;
+    min-height: 150px;
     padding: 20px;
+    margin-bottom: 20px;
 }
 
 p.active {

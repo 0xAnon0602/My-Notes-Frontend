@@ -31,10 +31,23 @@ function Home() {
 
   const addNewNote = () => {
     const newNotes = [...notes];
-    newNotes.push(newNote)
+    newNotes.push({ ...newNote });
     setNotes(newNotes);
-  }
-
+  
+    setNewNote({
+      title: "Title",
+      text: "Note",
+    });
+  
+    const titleInput = document.querySelector('.input-note .note-title');
+    const textInput = document.querySelector('.input-note .note-text');
+  
+    if (titleInput && textInput) {
+      titleInput.innerText = "Title";
+      textInput.innerText = "Note";
+    }
+    
+  };
   return (
     <div className="main">
 
