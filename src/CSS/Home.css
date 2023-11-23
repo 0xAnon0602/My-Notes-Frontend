@@ -16,6 +16,16 @@
     font-size: large;
 }
 
+.input-note {
+    width: 30%;
+    padding: 20px;
+    padding-top: 0px;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    border-color: #52565B;
+    border-style:groove;
+}
+
 .allNotes {
     width: 90%; 
     margin-top: 20px; 
@@ -34,6 +44,9 @@
     padding: 20px;
 }
 
+p.active {
+    font-style: italic;
+}
 
 .note-title {
     font-size: 20px;
