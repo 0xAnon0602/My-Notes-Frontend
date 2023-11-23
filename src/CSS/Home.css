@@ -1,0 +1,44 @@
+.main {
+    color: #E6E6E6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-title {
+    font-size: 35px;
+    margin-top: 6%;
+    text-align: center;
+}
+
+.google-button {
+    font-size: large;
+}
+
+.allNotes {
+    width: 90%; 
+    margin-top: 20px; 
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+}
+
+.note {
+    border-radius: 20px;
+    border-color: #52565B;
+    border-style:groove;
+    margin-left: 25px;
+    width: 40%;
+    min-height: 150px; 
+    padding: 20px;
+}
+
+
+.note-title {
+    font-size: 20px;
+}
+
+.note-text {
+    font-size: 15px;
+}
