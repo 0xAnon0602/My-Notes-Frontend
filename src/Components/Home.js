@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +16,8 @@ function Home() {
     title: "Title",
     text: "Note",
   });
+
+  const [isLoggedIn, setLoginStatus] = useState(false)
 
   const handleTitleChange = (index, event) => {
     const newNotes = [...notes];
@@ -54,7 +57,7 @@ function Home() {
   };
 
   return (
-    <div className="main">
+  <div className="main">
       <div className="main-title">
         <p>My Notes</p>
       </div>
@@ -111,7 +114,7 @@ function Home() {
           </div>
         ))}
       </div>
-    </div>
+  </div>
   );
 }
 
