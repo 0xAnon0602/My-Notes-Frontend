@@ -14,18 +14,15 @@ function Home(userDetails) {
     text: "Note",
   });
 
-
 	const getNotes = async () => {
 		try {
 			const url = `http://localhost:8080/user/notes`;
 			const { data } = await axios.get(url, { withCredentials: true });
-      console.log(data.info)
 			setNotes(data.info.notes);
 		} catch (err) {
 			console.log(err);
 		}
 	};
-
 
   const addNotesToDatabase = async () => {
 		try {
@@ -34,8 +31,6 @@ function Home(userDetails) {
         title: newNote.title,
         text: newNote.text,
       };
-
-      console.log(requestData)
 
       const response = await axios.post(url, requestData, { withCredentials: true });
       getNotes()
@@ -53,8 +48,6 @@ function Home(userDetails) {
         noteId: _id,
       };
 
-      console.log(requestData)
-
       const response = await axios.post(url, requestData, { withCredentials: true });
       getNotes()
       return (response.status===200)
@@ -63,20 +56,45 @@ function Home(userDetails) {
 		}
 	};
 
+  const updateNote = async (noteId, newTitle, newText) => {
+    try {
+      const url = `http://localhost:8080/user/updateNote`;
+      const requestData = {
+        noteId: noteId,
+        newTitle: newTitle,
+        newText: newText,
+      };
+  
+      const response = await axios.post(url, requestData, { withCredentials: true });
+      // Handle response as needed
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
 
 	useEffect(() => {
 		getNotes();
 	}, []);
 
-  const handleTitleChange = (index, event) => {
+  const handleTitleChange = async(index, event) => {
+
     const newNotes = [...notes];
     newNotes[index].title = event.target.innerText;
+
+    await updateNote(newNotes[index]._id,newNotes[index].title,notes[index].text)
+
     setNotes(newNotes);
   };
 
-  const handleTextChange = (index, event) => {
+  const handleTextChange = async(index, event) => {
+
     const newNotes = [...notes];
     newNotes[index].text = event.target.innerText;
+
+    await updateNote(newNotes[index]._id,newNotes[index].text,notes[index].title)
+
     setNotes(newNotes);
   };
 
@@ -195,7 +213,7 @@ function Home(userDetails) {
                 <DeleteIcon fontSize="inherit" />
               </IconButton>
             </span>
-          </div>
+          </div> 
         ))}
       </div>
   </div>
