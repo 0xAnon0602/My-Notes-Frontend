@@ -38,6 +38,25 @@ function Home(userDetails) {
       console.log(requestData)
 
       const response = await axios.post(url, requestData, { withCredentials: true });
+      getNotes()
+      return (response.status===200)
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+
+  const deleteNotesFromDatabase = async (_id) => {
+		try {
+			const url = `http://localhost:8080/user/deleteNote`;
+      const requestData = {
+        noteId: _id,
+      };
+
+      console.log(requestData)
+
+      const response = await axios.post(url, requestData, { withCredentials: true });
+      getNotes()
       return (response.status===200)
 		} catch (err) {
 			console.log(err);
@@ -89,10 +108,17 @@ function Home(userDetails) {
 
   };
 
-  const deleteNote = (index) => {
-    const updatedNotes = [...notes];
-    updatedNotes.splice(index, 1);
-    setNotes(updatedNotes);
+  const deleteNote = async(index) => {
+
+    const status = await deleteNotesFromDatabase(notes[index]._id)
+
+    if(status){
+
+      const updatedNotes = [...notes];
+      updatedNotes.splice(index, 1);
+      setNotes(updatedNotes);
+
+    }
   };
 
 
