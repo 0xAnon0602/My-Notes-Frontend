@@ -7,18 +7,47 @@ import "../CSS/Home.css"
 
 function Home(userDetails) {
   const displayName = userDetails.user;
-  const [notes, setNotes] = useState([
-    { title: 'Note Title', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor eleifend velit a lobortis. Curabitur vitae porta enim. Cras scelerisque tristique diam ut placerat. Cras eleifend euismod odio at rutrum. Morbi porttitor quis augue quis egestas. Cras a elementum lectus. Integer id tempor augue, sit amet elementum nibh. Nam cursus enim ut nunc hendrerit lobortis. Aenean sed dui dictum, tempus risus non, finibus purus. Suspendisse vel nisl et ligula pulvinar aliquam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst.' },
-    { title: 'Note Title', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor eleifend velit a lobortis. Curabitur vitae porta enim. Cras scelerisque tristique diam ut placerat. Cras eleifend euismod odio at rutrum. Morbi porttitor quis augue quis egestas. Cras a elementum lectus. Integer id tempor augue, sit amet elementum nibh. Nam cursus enim ut nunc hendrerit lobortis. Aenean sed dui dictum, tempus risus non, finibus purus. Suspendisse vel nisl et ligula pulvinar aliquam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst.' },
-    { title: 'Note Title', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor eleifend velit a lobortis. Curabitur vitae porta enim. Cras scelerisque tristique diam ut placerat. Cras eleifend euismod odio at rutrum. Morbi porttitor quis augue quis egestas. Cras a elementum lectus. Integer id tempor augue, sit amet elementum nibh. Nam cursus enim ut nunc hendrerit lobortis. Aenean sed dui dictum, tempus risus non, finibus purus. Suspendisse vel nisl et ligula pulvinar aliquam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst.' },
-  ]);
+  const [notes, setNotes] = useState([]);
 
   const [newNote, setNewNote] = useState({
     title: "Title",
     text: "Note",
   });
 
-  const [isLoggedIn, setLoginStatus] = useState(false)
+
+	const getNotes = async () => {
+		try {
+			const url = `http://localhost:8080/user/notes`;
+			const { data } = await axios.get(url, { withCredentials: true });
+      console.log(data.info)
+			setNotes(data.info.notes);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+
+  const addNotesToDatabase = async () => {
+		try {
+			const url = `http://localhost:8080/user/addNote`;
+      const requestData = {
+        title: newNote.title,
+        text: newNote.text,
+      };
+
+      console.log(requestData)
+
+      const response = await axios.post(url, requestData, { withCredentials: true });
+      return (response.status===200)
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+
+	useEffect(() => {
+		getNotes();
+	}, []);
 
   const handleTitleChange = (index, event) => {
     const newNotes = [...notes];
@@ -32,23 +61,32 @@ function Home(userDetails) {
     setNotes(newNotes);
   };
 
-  const addNewNote = () => {
-    const newNotes = [...notes];
-    newNotes.push({ ...newNote });
-    setNotes(newNotes);
+  const addNewNote = async() => {
 
-    setNewNote({
-      title: "Title",
-      text: "Note",
-    });
+    const status = await addNotesToDatabase()
+    
+    if(status){
 
-    const titleInput = document.querySelector('.input-note .note-title');
-    const textInput = document.querySelector('.input-note .note-text');
+      const newNotes = [...notes];
+      newNotes.push({ ...newNote });
+      setNotes(newNotes);
+  
+      setNewNote({
+        title: "Title",
+        text: "Note",
+      });
+  
+      const titleInput = document.querySelector('.input-note .note-title');
+      const textInput = document.querySelector('.input-note .note-text');
+  
+      if (titleInput && textInput) {
+        titleInput.innerText = "Title";
+        textInput.innerText = "Note";
+      }
 
-    if (titleInput && textInput) {
-      titleInput.innerText = "Title";
-      textInput.innerText = "Note";
     }
+
+
   };
 
   const deleteNote = (index) => {
