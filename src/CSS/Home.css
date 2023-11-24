@@ -64,3 +64,13 @@ p.active {
 .deleteIcon {
     margin-top: auto;
 }
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-right: 20px;
+    word-spacing: 2px;
+    align-items: flex-end;
+    margin-left: auto;  
+}

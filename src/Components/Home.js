@@ -5,7 +5,8 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import "../CSS/Home.css"
 
-function Home() {
+function Home(userDetails) {
+  const displayName = userDetails.user;
   const [notes, setNotes] = useState([
     { title: 'Note Title', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor eleifend velit a lobortis. Curabitur vitae porta enim. Cras scelerisque tristique diam ut placerat. Cras eleifend euismod odio at rutrum. Morbi porttitor quis augue quis egestas. Cras a elementum lectus. Integer id tempor augue, sit amet elementum nibh. Nam cursus enim ut nunc hendrerit lobortis. Aenean sed dui dictum, tempus risus non, finibus purus. Suspendisse vel nisl et ligula pulvinar aliquam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst.' },
     { title: 'Note Title', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam auctor eleifend velit a lobortis. Curabitur vitae porta enim. Cras scelerisque tristique diam ut placerat. Cras eleifend euismod odio at rutrum. Morbi porttitor quis augue quis egestas. Cras a elementum lectus. Integer id tempor augue, sit amet elementum nibh. Nam cursus enim ut nunc hendrerit lobortis. Aenean sed dui dictum, tempus risus non, finibus purus. Suspendisse vel nisl et ligula pulvinar aliquam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst.' },
@@ -56,8 +57,27 @@ function Home() {
     setNotes(updatedNotes);
   };
 
+
+  const logout = () => {
+    window.open(
+        `http://localhost:8080/auth/logout`,
+        "_self"
+    );
+};
+
   return (
   <div className="main">
+
+      <div className='navbar'>
+        <Button variant="contained" size="small">
+            {displayName.name}
+        </Button>
+        <div style={{ marginLeft: '10px' }}></div>
+        <Button variant="contained" size="small" onClick={logout}>
+            Log Out
+        </Button>
+      </div>
+
       <div className="main-title">
         <p>My Notes</p>
       </div>
