@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SocialIcon } from 'react-social-icons';
-import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -16,19 +15,58 @@ function Home(userDetails) {
 
   const filter = createFilterOptions();
 
-  const [categoriesFilter, setCategoriesFilter] = useState([{name:"Home"}]);
-  const displayName = userDetails.user;
-  const [notes, setNotes] = useState([]);
-  const [value, setValue] = useState({name:categoriesFilter[0].name});
+  var [categoriesFilter, setCategoriesFilter] = useState([{name:"Home"}]);
+  var displayName = userDetails.user;
+  var [notes, setNotes] = useState([]);
+  var [value, setValue] = useState({name:categoriesFilter[0].name});
+  var [searchOn,setSearchOn] = useState(false)
+  var [buttonText,setButtonText] = useState("Search Notes")
+  var [categorySearch,setCategorySearch] = useState("")
+  var [searchText,setSearchText] = useState("");
+  var [searchResults, setSearchResults] = useState([]);
 
-
-
-  const [newNote, setNewNote] = useState({
+  var [newNote, setNewNote] = useState({
     title: "Title",
     text: "Note",
-    category:value.name
+    category: value.name || "Home"
   });
 
+
+  const handleTitleSearch = (searchTextTemp) => {
+
+    const filteredNotes = notes.filter((note) => {
+
+      const titleMatch = note.title.toLowerCase().includes(searchTextTemp.toLowerCase());
+
+      var categoryMatch = true;
+
+      if(categorySearch!='' && categorySearch!= null && categorySearch != undefined ){
+        categoryMatch = note.category.toLowerCase().includes(categorySearch['name'].toLowerCase());
+      }
+
+      return titleMatch && categoryMatch
+    });
+
+    setSearchResults(filteredNotes);
+  };
+
+  const handleCategorySearch = (categorySearchTemp) => {
+
+    const filteredNotes = notes.filter((note) => {
+
+      const titleMatch = note.title.toLowerCase().includes(searchText.toLowerCase());
+
+      var categoryMatch = true;
+
+      if(categorySearch!=''){
+        categoryMatch = note.category.toLowerCase().includes(categorySearchTemp['name'].toLowerCase());
+      }
+
+      return titleMatch && categoryMatch
+    });
+
+    setSearchResults(filteredNotes);
+  };
 
 
 	const getNotes = async () => {
@@ -106,7 +144,7 @@ function Home(userDetails) {
   const handleTitleChange = async(index, event) => {
 
     const newNotes = [...notes];
-    newNotes[index].title = event.target.innerText;
+    newNotes[index].title = event.target.value;
 
     await updateNote(newNotes[index]._id,newNotes[index].title,notes[index].text)
 
@@ -116,7 +154,7 @@ function Home(userDetails) {
   const handleTextChange = async(index, event) => {
 
     const newNotes = [...notes];
-    newNotes[index].text = event.target.innerText;
+    newNotes[index].text = event.target.value;
 
     await updateNote(newNotes[index]._id,newNotes[index].text,notes[index].title)
 
@@ -131,7 +169,6 @@ function Home(userDetails) {
 
       const newNotes = [...notes];
       newNotes.push({ ...newNote });
-      console.log(newNote)
       setNotes(newNotes);
   
       setNewNote({
@@ -172,6 +209,19 @@ function Home(userDetails) {
     );
   };
 
+  const toggleSearch = () => {
+
+    if(!searchOn){
+      setButtonText("Add Notes")
+    }else if(searchOn){
+      setButtonText("Search Notes")
+    }
+    setSearchOn(!searchOn)
+    setSearchResults(notes)
+
+  }
+
+
 	useEffect(() => {
 		getNotes();
 	}, []);
@@ -180,6 +230,11 @@ function Home(userDetails) {
   <div className="main">
 
       <div className='navbar'>
+
+        <Button variant="contained" size="small" onClick={toggleSearch}>
+              {buttonText}
+        </Button>
+        <div style={{ marginLeft: '10px' }}></div>
         <Button variant="contained" size="small">
             {displayName.name}
         </Button>
@@ -189,120 +244,194 @@ function Home(userDetails) {
         </Button>
       </div>
 
+
       <div className="main-title">
         <p>My Notes</p>
       </div>
 
+    {!searchOn && (
+
+
       <div className='input-note'>
-    <div className='note-header'>
-      <p
-        className='note-title'
-        contentEditable
-        onBlur={(event) => {
-          newNote.title = event.target.innerText;
-          setNewNote(newNote);
+
+            <div style={{ marginTop: '13px' }}></div>
+            <TextField
+                id="outlined-multiline-flexible"
+                label="Title"
+                multiline
+                maxRows={4}
+                sx={{ width: 300}}
+                onBlur={(event) => {
+                  newNote.title = event.target.value;
+                  setNewNote(newNote);
+                }}
+            />
+
+            <div style={{ marginTop: '13px' }}></div>
+
+            <TextField
+                id="outlined-multiline-flexible"
+                label="Text"
+                multiline
+                maxRows={4}
+                sx={{ width: 300}}
+                onBlur={(event) => {
+                  newNote.text = event.target.value;
+                  setNewNote(newNote);
+                }}
+            />
+
+
+        <div style={{ marginTop: '13px' }}></div>
+
+          <span className='category-text'>
+          <Autocomplete
+            value={value}
+            onChange={(event, newValue) => {
+              if (typeof newValue === 'string') {
+                setValue({
+                  name: newValue,
+                });
+              } else if (newValue && newValue.inputValue) {
+                setValue({
+                  name: newValue.inputValue,
+                });
+              } else {
+                setValue(newValue);
+              }
+
+              console.log(newValue)
+            }}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+
+              const { inputValue } = params;
+              // Suggest the creation of a new value
+              const isExisting = options.some((option) => inputValue === option.name);
+              if (inputValue !== '' && !isExisting) {
+                filtered.push({
+                  inputValue,
+                  name: `Add ${inputValue}`,
+                });
+              }
+
+              return filtered;
+            }}
+            selectOnFocus
+            clearOnBlur
+            handleHomeEndKeys
+            id="free-solo-with-text-demo"
+            options={categoriesFilter}
+            getOptionLabel={(option) => {
+              // Value selected with enter, right from the input
+              if (typeof option === 'string') {
+                return option;
+              }
+              // Add "xxx" option created dynamically
+              if (option.inputValue) {
+                return option.inputValue;
+              }
+              // Regular option
+              return option.name;
+            }}
+            renderOption={(props, option) => <li {...props}>{option.name}</li>}
+            sx={{ width: 300}}
+            freeSolo
+            renderInput={(params) => (
+              <TextField {...params} label="Category" />
+            )}
+          />
+          </span>
+
+          <div style={{ marginTop: '10px' }}></div>
+          <Button variant="contained" size="small" onClick={addNewNote}>
+            New Note
+          </Button>
+          <div style={{ marginTop: '10px' }}></div>
+      </div>
+
+    )}
+
+    {searchOn && (
+      <>
+      
+      <TextField
+        id="outlined-multiline-flexible"
+        label="Search Notes"
+        sx={{ width: 300}}
+        onChange={(event) => {
+          setSearchText(event.target.value)
+          handleTitleSearch(event.target.value);
         }}
-      >
-        {newNote.title}
-      </p>
-    </div>
-    <p
-      className='note-text'
-      contentEditable
-      onBlur={(event) => {
-        newNote.text = event.target.innerText;
-        setNewNote(newNote);
-      }}
-    >
-      {newNote.text}
-    </p>
+      />
 
-    <span className='category-text'>
-    <Autocomplete
-      value={value}
-      onChange={(event, newValue) => {
-        if (typeof newValue === 'string') {
-          setValue({
-            name: newValue,
-          });
-        } else if (newValue && newValue.inputValue) {
-          // Create a new value from the user input
-          setValue({
-            name: newValue.inputValue,
-          });
-        } else {
-          setValue(newValue);
-        }
+      <div style={{ marginTop: '15px' }}></div>
 
-        console.log(newValue)
-      }}
-      filterOptions={(options, params) => {
-        const filtered = filter(options, params);
+      <Autocomplete
+            value={categorySearch}
+            onChange={(event, newValue) => {
+              if (typeof newValue === 'string') {
+                setCategorySearch(newValue);
+              } else if (newValue && newValue.inputValue) {
+                setCategorySearch(newValue.inputValue);
+              } else {
+                setCategorySearch(newValue);
+              }
+              handleCategorySearch(newValue)
+            }}
+            selectOnFocus
+            clearOnBlur
+            handleHomeEndKeys
+            id="free-solo-with-text-demo"
+            options={categoriesFilter}
+            getOptionLabel={(option) => {
+              if (typeof option === 'string') {
+                return option;
+              }
+              if (option.inputValue) {
+                return option.inputValue;
+              }
+              return option.name;
+            }}
+            renderOption={(props, option) => <li {...props}>{option.name}</li>}
+            sx={{ width: 300}}
+            freeSolo
+            renderInput={(params) => (
+              <TextField {...params} label="Category" />
+            )}
+      />
 
-        const { inputValue } = params;
-        // Suggest the creation of a new value
-        const isExisting = options.some((option) => inputValue === option.name);
-        if (inputValue !== '' && !isExisting) {
-          filtered.push({
-            inputValue,
-            name: `Add ${inputValue}`,
-          });
-        }
-
-        return filtered;
-      }}
-      selectOnFocus
-      clearOnBlur
-      handleHomeEndKeys
-      id="free-solo-with-text-demo"
-      options={categoriesFilter}
-      getOptionLabel={(option) => {
-        // Value selected with enter, right from the input
-        if (typeof option === 'string') {
-          return option;
-        }
-        // Add "xxx" option created dynamically
-        if (option.inputValue) {
-          return option.inputValue;
-        }
-        // Regular option
-        return option.name;
-      }}
-      renderOption={(props, option) => <li {...props}>{option.name}</li>}
-      sx={{ width: 300}}
-      freeSolo
-      renderInput={(params) => (
-        <TextField {...params} label="Category" />
-      )}
-    />
-    </span>
+      </>
+    )}
 
 
-      <div style={{ marginTop: '10px' }}></div>
-    <Button variant="contained" size="small" onClick={addNewNote}>
-      New Note
-    </Button>
-    <div style={{ marginTop: '10px' }}></div>
-  </div>
-
-
+    {!searchOn && (
       <div className='allNotes'>
         {notes.map((note, index) => (
           <div key={index} className='note'>
-            <p
-              className='note-title'
-              contentEditable
-              onBlur={(event) => handleTitleChange(index, event)}
-            >
-              {note.title}
-            </p>
-            <p
-              className='note-text'
-              contentEditable
-              onBlur={(event) => handleTextChange(index, event)}
-            >
-              {note.text}
-            </p>
+
+            <div style={{ marginTop: '13px' }}></div>
+            <TextField
+                label="Title"
+                variant='standard'
+                multiline
+                maxRows={4}
+                sx={{ width: 300}}
+                onBlur={(event) => handleTitleChange(index, event)}
+                defaultValue={note.title}
+            />
+
+          <div style={{ marginTop: '13px' }}></div>
+            <TextField
+                label="Text"
+                variant='standard'
+                multiline
+                maxRows={4}
+                sx={{ width: 300}}
+                onBlur={(event) => handleTextChange(index, event)}
+                defaultValue={note.text}
+            />
+          <div style={{ marginTop: '13px' }}></div>
 
             <div className='note-actions'>
               <span className='deleteIcon'>
@@ -317,6 +446,47 @@ function Home(userDetails) {
           </div> 
         ))}
       </div>
+    )}
+
+    {searchOn && (
+          <div className='allNotes'>
+            {searchResults.map((note, index) => (
+              <div key={index} className='note'>
+
+                <div style={{ marginTop: '13px' }}></div>
+                <TextField
+                    label="Title"
+                    variant='standard'
+                    multiline
+                    maxRows={4}
+                    sx={{ width: 300}}
+                    onBlur={(event) => handleTitleChange(index, event)}
+                    defaultValue={note.title}
+                />
+
+              <div style={{ marginTop: '13px' }}></div>
+                <TextField
+                    label="Text"
+                    variant='standard'
+                    multiline
+                    maxRows={4}
+                    sx={{ width: 300}}
+                    onBlur={(event) => handleTextChange(index, event)}
+                    defaultValue={note.text}
+                />
+              <div style={{ marginTop: '13px' }}></div>
+
+                <div className='note-actions'>
+                  <Chip className='note-chip' label={note.category} color="primary" />
+
+                </div>
+                        
+              </div> 
+            ))}
+          </div>
+        )}
+
+
 
       <div className="footer">
           <SocialIcon url="https://twitter.com/0xAnon0602" style={{ height: 30, width: 30 }} />
