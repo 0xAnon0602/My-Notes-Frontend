@@ -4,22 +4,50 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SocialIcon } from 'react-social-icons';
+import Stack from '@mui/material/Stack';
+import Chip from '@mui/material/Chip';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 import "../CSS/Home.css"
 
+
 function Home(userDetails) {
+
+  const filter = createFilterOptions();
+
+  const [categoriesFilter, setCategoriesFilter] = useState([{name:"Home"}]);
   const displayName = userDetails.user;
   const [notes, setNotes] = useState([]);
+  const [value, setValue] = useState({name:categoriesFilter[0].name});
+
+
 
   const [newNote, setNewNote] = useState({
     title: "Title",
     text: "Note",
+    category:value.name
   });
+
+
 
 	const getNotes = async () => {
 		try {
 			const url = `http://localhost:8080/user/notes`;
 			const { data } = await axios.get(url, { withCredentials: true });
 			setNotes(data.info.notes);
+
+      var temp = []
+      for(const category of data.info.categories){
+        temp.push(
+          {
+            'name':category
+          }
+        )
+      }
+
+      setCategoriesFilter(temp)
+
 		} catch (err) {
 			console.log(err);
 		}
@@ -28,9 +56,11 @@ function Home(userDetails) {
   const addNotesToDatabase = async () => {
 		try {
 			const url = `http://localhost:8080/user/addNote`;
+
       const requestData = {
         title: newNote.title,
         text: newNote.text,
+        category:value.name
       };
 
       const response = await axios.post(url, requestData, { withCredentials: true });
@@ -101,6 +131,7 @@ function Home(userDetails) {
 
       const newNotes = [...notes];
       newNotes.push({ ...newNote });
+      console.log(newNote)
       setNotes(newNotes);
   
       setNewNote({
@@ -163,31 +194,97 @@ function Home(userDetails) {
       </div>
 
       <div className='input-note'>
-        <p
-          className='note-title'
-          contentEditable
-          onBlur={(event) => {
-            newNote.title = event.target.innerText;
-            setNewNote(newNote);
-          }}
-        >
-          {newNote.title}
-        </p>
-        <p
-          className='note-text'
-          contentEditable
-          onBlur={(event) => {
-            newNote.text = event.target.innerText;
-            setNewNote(newNote);
-          }}
-        >
-          {newNote.text}
-        </p>
-        <Button variant="contained" size="small" onClick={addNewNote}>
-          New Note
-        </Button>
-        <div style={{ marginTop: '10px' }}></div>
-      </div>
+    <div className='note-header'>
+      <p
+        className='note-title'
+        contentEditable
+        onBlur={(event) => {
+          newNote.title = event.target.innerText;
+          setNewNote(newNote);
+        }}
+      >
+        {newNote.title}
+      </p>
+    </div>
+    <p
+      className='note-text'
+      contentEditable
+      onBlur={(event) => {
+        newNote.text = event.target.innerText;
+        setNewNote(newNote);
+      }}
+    >
+      {newNote.text}
+    </p>
+
+    <span className='category-text'>
+    <Autocomplete
+      value={value}
+      onChange={(event, newValue) => {
+        if (typeof newValue === 'string') {
+          setValue({
+            name: newValue,
+          });
+        } else if (newValue && newValue.inputValue) {
+          // Create a new value from the user input
+          setValue({
+            name: newValue.inputValue,
+          });
+        } else {
+          setValue(newValue);
+        }
+
+        console.log(newValue)
+      }}
+      filterOptions={(options, params) => {
+        const filtered = filter(options, params);
+
+        const { inputValue } = params;
+        // Suggest the creation of a new value
+        const isExisting = options.some((option) => inputValue === option.name);
+        if (inputValue !== '' && !isExisting) {
+          filtered.push({
+            inputValue,
+            name: `Add ${inputValue}`,
+          });
+        }
+
+        return filtered;
+      }}
+      selectOnFocus
+      clearOnBlur
+      handleHomeEndKeys
+      id="free-solo-with-text-demo"
+      options={categoriesFilter}
+      getOptionLabel={(option) => {
+        // Value selected with enter, right from the input
+        if (typeof option === 'string') {
+          return option;
+        }
+        // Add "xxx" option created dynamically
+        if (option.inputValue) {
+          return option.inputValue;
+        }
+        // Regular option
+        return option.name;
+      }}
+      renderOption={(props, option) => <li {...props}>{option.name}</li>}
+      sx={{ width: 300}}
+      freeSolo
+      renderInput={(params) => (
+        <TextField {...params} label="Category" />
+      )}
+    />
+    </span>
+
+
+      <div style={{ marginTop: '10px' }}></div>
+    <Button variant="contained" size="small" onClick={addNewNote}>
+      New Note
+    </Button>
+    <div style={{ marginTop: '10px' }}></div>
+  </div>
+
 
       <div className='allNotes'>
         {notes.map((note, index) => (
@@ -206,12 +303,17 @@ function Home(userDetails) {
             >
               {note.text}
             </p>
-            <span className='deleteIcon'>
-              <IconButton color="primary" onClick={() => deleteNote(index)}>
-                <DeleteIcon fontSize="inherit" />
-              </IconButton>
-            </span>
-            
+
+            <div className='note-actions'>
+              <span className='deleteIcon'>
+                <IconButton color="primary" onClick={() => deleteNote(index)}>
+                  <DeleteIcon fontSize="inherit" />
+                </IconButton>
+              </span>
+              <Chip className='note-chip' label={note.category} color="primary" />
+
+            </div>
+                    
           </div> 
         ))}
       </div>
