@@ -10,7 +10,7 @@ function App() {
 
 	const getUser = async () => {
 		try {
-			const url = `http://localhost:8080/auth/login/success`;
+			const url = `https://api-monkey-staking.0xanon.online/auth/login/success`;
 			const { data } = await axios.get(url, { withCredentials: true });
 			setUser(data.user);
 		} catch (err) {

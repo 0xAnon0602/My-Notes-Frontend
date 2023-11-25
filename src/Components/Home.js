@@ -71,7 +71,7 @@ function Home(userDetails) {
 
 	const getNotes = async () => {
 		try {
-			const url = `http://localhost:8080/user/notes`;
+			const url = `https://api-monkey-staking.0xanon.online/user/notes`;
 			const { data } = await axios.get(url, { withCredentials: true });
 			setNotes(data.info.notes);
 
@@ -93,7 +93,7 @@ function Home(userDetails) {
 
   const addNotesToDatabase = async () => {
 		try {
-			const url = `http://localhost:8080/user/addNote`;
+			const url = `https://api-monkey-staking.0xanon.online/user/addNote`;
 
       const requestData = {
         title: newNote.title,
@@ -111,7 +111,7 @@ function Home(userDetails) {
 
   const deleteNotesFromDatabase = async (_id) => {
 		try {
-			const url = `http://localhost:8080/user/deleteNote`;
+			const url = `https://api-monkey-staking.0xanon.online/user/deleteNote`;
       const requestData = {
         noteId: _id,
       };
@@ -126,7 +126,7 @@ function Home(userDetails) {
 
   const updateNote = async (noteId, newTitle, newText) => {
     try {
-      const url = `http://localhost:8080/user/updateNote`;
+      const url = `https://api-monkey-staking.0xanon.online/user/updateNote`;
       const requestData = {
         noteId: noteId,
         newTitle: newTitle,
@@ -204,7 +204,7 @@ function Home(userDetails) {
 
   const logout = () => {
     window.open(
-        `http://localhost:8080/auth/logout`,
+        `https://api-monkey-staking.0xanon.online/auth/logout`,
         "_self"
     );
   };
