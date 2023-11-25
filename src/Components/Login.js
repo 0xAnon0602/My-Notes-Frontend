@@ -1,30 +1,36 @@
-import React, { useState,useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import Button from '@mui/material/Button';
-import { Link } from "react-router-dom";
+import { SocialIcon } from 'react-social-icons';
 
-import "../CSS/Home.css"
+import "../CSS/Login.css";
 
 function Login() {
-
   const googleAuth = () => {
     window.open(
-        `http://localhost:8080/auth/google`,
-        "_self"
+      `http://localhost:8080/auth/google`,
+      "_self"
     );
-};
+  };
 
   return (
-  <div className="main">
-      <div className="main-title">
-        <p>My Notes</p>
-      </div>
+    <div className="login-page">
+      <div className="main-home">
+        <div className="main-title-home">
+          <p>My Notes</p>
+        </div>
 
-      <Button variant="contained" size="small" onClick={googleAuth}>
+        <Button variant="contained" size="small" onClick={googleAuth}>
           Sign in with Google
-      </Button>
+          <img className='google-button-image' src="google.png" alt="google icon" />
+        </Button>
 
-  </div>
+        <div className="footer">
+          <SocialIcon url="https://twitter.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+          <SocialIcon url="https://github.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+        </div>
+        <p>Created by 0xAnon</p>
+      </div>
+    </div>
   );
 }
 

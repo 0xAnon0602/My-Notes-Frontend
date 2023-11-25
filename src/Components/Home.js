@@ -3,6 +3,7 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { SocialIcon } from 'react-social-icons';
 import "../CSS/Home.css"
 
 function Home(userDetails) {
@@ -40,7 +41,6 @@ function Home(userDetails) {
 		}
 	};
 
-
   const deleteNotesFromDatabase = async (_id) => {
 		try {
 			const url = `http://localhost:8080/user/deleteNote`;
@@ -72,11 +72,6 @@ function Home(userDetails) {
       console.log(err);
     }
   };
-
-
-	useEffect(() => {
-		getNotes();
-	}, []);
 
   const handleTitleChange = async(index, event) => {
 
@@ -139,13 +134,16 @@ function Home(userDetails) {
     }
   };
 
-
   const logout = () => {
     window.open(
         `http://localhost:8080/auth/logout`,
         "_self"
     );
-};
+  };
+
+	useEffect(() => {
+		getNotes();
+	}, []);
 
   return (
   <div className="main">
@@ -185,10 +183,10 @@ function Home(userDetails) {
         >
           {newNote.text}
         </p>
-
         <Button variant="contained" size="small" onClick={addNewNote}>
           New Note
         </Button>
+        <div style={{ marginTop: '10px' }}></div>
       </div>
 
       <div className='allNotes'>
@@ -213,9 +211,18 @@ function Home(userDetails) {
                 <DeleteIcon fontSize="inherit" />
               </IconButton>
             </span>
+            
           </div> 
         ))}
       </div>
+
+      <div className="footer">
+          <SocialIcon url="https://twitter.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+          <SocialIcon url="https://github.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+      </div>
+      <p>Created by 0xAnon</p>
+
+
   </div>
   );
 }
