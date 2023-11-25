@@ -74,3 +74,38 @@ p.active {
     align-items: flex-end;
     margin-left: auto;  
 }
+
+
+@media (max-width: 750px) {
+    .main-title {
+        font-size: 25px;
+        margin-top: 6%;
+        text-align: center;
+    }
+    .note-title {
+        font-size: 15px;
+    }
+    
+    .note-text {
+        font-size: 10px;
+    }
+
+    .input-note {
+        width: 70%;
+        padding: 30px;
+        padding-top: 0px;
+        padding-bottom: 5px;
+        border-radius: 20px;
+        border-color: #52565B;
+        border-style: groove;
+    }
+
+    .allNotes {
+        width: 100%;
+        margin-top: 20px;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; 
+    }
+}
