@@ -214,6 +214,8 @@ function Home(userDetails) {
     }
     setSearchOn(!searchOn)
     setSearchResults(notes)
+    setSearchText("")
+    setCategorySearch("")
 
   }
 
@@ -440,7 +442,7 @@ function Home(userDetails) {
     {searchOn && (
           <div className='allNotes'>
             {searchResults.map((note, index) => (
-              <div key={index} className='note'>
+              <div key={note._id} className='note'>
 
                 <div style={{ marginTop: '13px' }}></div>
                 <TextField className='noteText'
