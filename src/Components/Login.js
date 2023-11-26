@@ -7,7 +7,7 @@ import "../CSS/Login.css";
 function Login() {
   const googleAuth = () => {
     window.open(
-      `https://api-monkey-staking.0xanon.online/auth/google`,
+      `${process.env.REACT_APP_API_URL}/auth/google`,
       "_self"
     );
   };

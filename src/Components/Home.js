@@ -7,20 +7,17 @@ import { SocialIcon } from 'react-social-icons';
 import Chip from '@mui/material/Chip';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
 import "../CSS/Home.css"
-
 
 function Home(userDetails) {
 
   const filter = createFilterOptions();
-
   var [categoriesFilter, setCategoriesFilter] = useState([{name:"Home"}]);
   var displayName = userDetails.user;
   var [notes, setNotes] = useState([]);
   var [value, setValue] = useState({name:categoriesFilter[0].name});
   var [searchOn,setSearchOn] = useState(false)
-  var [buttonText,setButtonText] = useState("Search Notes")
+  var [buttonText,setButtonText] = useState("Search")
   var [categorySearch,setCategorySearch] = useState("")
   var [searchText,setSearchText] = useState("");
   var [searchResults, setSearchResults] = useState([]);
@@ -40,7 +37,7 @@ function Home(userDetails) {
 
       var categoryMatch = true;
 
-      if(categorySearch!='' && categorySearch!= null && categorySearch != undefined ){
+      if(categorySearch!=='' && categorySearch!== null && categorySearch !== undefined ){
         categoryMatch = note.category.toLowerCase().includes(categorySearch['name'].toLowerCase());
       }
 
@@ -58,7 +55,7 @@ function Home(userDetails) {
 
       var categoryMatch = true;
 
-      if(categorySearch!=''){
+      if(categorySearch!==''){
         categoryMatch = note.category.toLowerCase().includes(categorySearchTemp['name'].toLowerCase());
       }
 
@@ -68,10 +65,9 @@ function Home(userDetails) {
     setSearchResults(filteredNotes);
   };
 
-
 	const getNotes = async () => {
 		try {
-			const url = `https://api-monkey-staking.0xanon.online/user/notes`;
+			const url = `${process.env.REACT_APP_API_URL}/user/notes`;
 			const { data } = await axios.get(url, { withCredentials: true });
 			setNotes(data.info.notes);
 
@@ -93,7 +89,7 @@ function Home(userDetails) {
 
   const addNotesToDatabase = async () => {
 		try {
-			const url = `https://api-monkey-staking.0xanon.online/user/addNote`;
+			const url = `${process.env.REACT_APP_API_URL}/user/addNote`;
 
       const requestData = {
         title: newNote.title,
@@ -111,7 +107,7 @@ function Home(userDetails) {
 
   const deleteNotesFromDatabase = async (_id) => {
 		try {
-			const url = `https://api-monkey-staking.0xanon.online/user/deleteNote`;
+			const url = `${process.env.REACT_APP_API_URL}/user/deleteNote`;
       const requestData = {
         noteId: _id,
       };
@@ -126,7 +122,7 @@ function Home(userDetails) {
 
   const updateNote = async (noteId, newTitle, newText) => {
     try {
-      const url = `https://api-monkey-staking.0xanon.online/user/updateNote`;
+      const url = `${process.env.REACT_APP_API_URL}/user/updateNote`;
       const requestData = {
         noteId: noteId,
         newTitle: newTitle,
@@ -204,7 +200,7 @@ function Home(userDetails) {
 
   const logout = () => {
     window.open(
-        `https://api-monkey-staking.0xanon.online/auth/logout`,
+        `${process.env.REACT_APP_API_URL}/auth/logout`,
         "_self"
     );
   };
@@ -214,13 +210,12 @@ function Home(userDetails) {
     if(!searchOn){
       setButtonText("Add Notes")
     }else if(searchOn){
-      setButtonText("Search Notes")
+      setButtonText("Search")
     }
     setSearchOn(!searchOn)
     setSearchResults(notes)
 
   }
-
 
 	useEffect(() => {
 		getNotes();
@@ -231,7 +226,7 @@ function Home(userDetails) {
 
       <div className='navbar'>
 
-        <Button variant="contained" size="small" onClick={toggleSearch}>
+        <Button className='navbarButton' variant="contained"  size="small" onClick={toggleSearch}>
               {buttonText}
         </Button>
         <div style={{ marginLeft: '10px' }}></div>
@@ -255,12 +250,11 @@ function Home(userDetails) {
       <div className='input-note'>
 
             <div style={{ marginTop: '13px' }}></div>
-            <TextField
+            <TextField className='inputText'
                 id="outlined-multiline-flexible"
                 label="Title"
                 multiline
                 maxRows={4}
-                sx={{ width: 300}}
                 onBlur={(event) => {
                   newNote.title = event.target.value;
                   setNewNote(newNote);
@@ -269,12 +263,11 @@ function Home(userDetails) {
 
             <div style={{ marginTop: '13px' }}></div>
 
-            <TextField
+            <TextField className='inputText'
                 id="outlined-multiline-flexible"
                 label="Text"
                 multiline
                 maxRows={4}
-                sx={{ width: 300}}
                 onBlur={(event) => {
                   newNote.text = event.target.value;
                   setNewNote(newNote);
@@ -284,7 +277,7 @@ function Home(userDetails) {
 
         <div style={{ marginTop: '13px' }}></div>
 
-          <span className='category-text'>
+          <span className='category-text inputText'>
           <Autocomplete
             value={value}
             onChange={(event, newValue) => {
@@ -335,7 +328,6 @@ function Home(userDetails) {
               return option.name;
             }}
             renderOption={(props, option) => <li {...props}>{option.name}</li>}
-            sx={{ width: 300}}
             freeSolo
             renderInput={(params) => (
               <TextField {...params} label="Category" />
@@ -404,30 +396,27 @@ function Home(userDetails) {
       </>
     )}
 
-
     {!searchOn && (
       <div className='allNotes'>
         {notes.map((note, index) => (
           <div key={index} className='note'>
 
             <div style={{ marginTop: '13px' }}></div>
-            <TextField
+            <TextField className='noteText'
                 label="Title"
                 variant='standard'
                 multiline
                 maxRows={4}
-                sx={{ width: 300}}
                 onBlur={(event) => handleTitleChange(index, event)}
                 defaultValue={note.title}
             />
 
           <div style={{ marginTop: '13px' }}></div>
-            <TextField
+            <TextField className='noteText'
                 label="Text"
                 variant='standard'
                 multiline
                 maxRows={4}
-                sx={{ width: 300}}
                 onBlur={(event) => handleTextChange(index, event)}
                 defaultValue={note.text}
             />
@@ -454,23 +443,21 @@ function Home(userDetails) {
               <div key={index} className='note'>
 
                 <div style={{ marginTop: '13px' }}></div>
-                <TextField
+                <TextField className='noteText'
                     label="Title"
                     variant='standard'
                     multiline
                     maxRows={4}
-                    sx={{ width: 300}}
                     onBlur={(event) => handleTitleChange(index, event)}
                     defaultValue={note.title}
                 />
 
               <div style={{ marginTop: '13px' }}></div>
-                <TextField
+                <TextField className='noteText'
                     label="Text"
                     variant='standard'
                     multiline
                     maxRows={4}
-                    sx={{ width: 300}}
                     onBlur={(event) => handleTextChange(index, event)}
                     defaultValue={note.text}
                 />
@@ -484,15 +471,13 @@ function Home(userDetails) {
               </div> 
             ))}
           </div>
-        )}
+    )}
 
-
-
-      <div className="footer">
-          <SocialIcon url="https://twitter.com/0xAnon0602" style={{ height: 30, width: 30 }} />
-          <SocialIcon url="https://github.com/0xAnon0602" style={{ height: 30, width: 30 }} />
-      </div>
-      <p>Created by 0xAnon</p>
+    <div className="footer">
+        <SocialIcon url="https://twitter.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+        <SocialIcon url="https://github.com/0xAnon0602" style={{ height: 30, width: 30 }} />
+    </div>
+    <p>Created by 0xAnon</p>
 
 
   </div>

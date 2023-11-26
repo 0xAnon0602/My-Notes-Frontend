@@ -88,6 +88,10 @@ p.active {
     margin-left: auto;  
 }
 
+.inputText {
+    width: 300px;
+}
+
 
 
 @media (max-width: 750px) {
@@ -114,12 +118,22 @@ p.active {
         border-style: groove;
     }
 
+    .inputText {
+        width: 250px;
+    }
+
     .allNotes {
-        width: 100%;
+        width: 160%;
         margin-top: 20px;
         padding: 20px;
         display: flex;
         flex-wrap: wrap;
         justify-content: center; 
     }
+
+    .noteText {
+        width: 100%;
+    }
+
+
 }
