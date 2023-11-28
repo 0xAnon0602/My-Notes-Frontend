@@ -134,15 +134,6 @@ function Home(userDetails) {
       const response = await axios.post(url, requestData, { withCredentials: true });
 
       if(response.status===200){
-        toast.success('Note was updated successfully!', {
-          position: "top-center",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "dark",
-        });
       }else{
         toast.error('Something went wrong!', {
           position: "top-center",
@@ -189,15 +180,7 @@ function Home(userDetails) {
     
     if(status){
 
-      toast.success('Note was addded successfully!', {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
+
 
       const newNotes = [...notes];
       newNotes.push({ ...newNote });
@@ -241,15 +224,7 @@ function Home(userDetails) {
 
     if(status){
 
-      toast.success('Note was deleted successfully!', {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-      });
+
 
       const updatedNotes = [...notes];
       updatedNotes.splice(index, 1);
@@ -352,7 +327,7 @@ function Home(userDetails) {
 
         <div style={{ marginTop: '13px' }}></div>
 
-          <span className='category-text inputText'>
+          <span className='inputText'>
           <Autocomplete
             value={value}
             onChange={(event, newValue) => {
