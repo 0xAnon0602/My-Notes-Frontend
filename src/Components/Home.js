@@ -7,6 +7,8 @@ import { SocialIcon } from 'react-social-icons';
 import Chip from '@mui/material/Chip';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import {toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../CSS/Home.css"
 
 function Home(userDetails) {
@@ -130,8 +132,29 @@ function Home(userDetails) {
       };
   
       const response = await axios.post(url, requestData, { withCredentials: true });
-      // Handle response as needed
-      console.log(response.data);
+
+      if(response.status===200){
+        toast.success('Note was updated successfully!', {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+        });
+      }else{
+        toast.error('Something went wrong!', {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "dark",
+        });
+      }
+
     } catch (err) {
       console.log(err);
     }
@@ -139,12 +162,15 @@ function Home(userDetails) {
 
   const handleTitleChange = async(index, event) => {
 
+    if(event.target.value!==notes[index].title){
+
     const newNotes = [...notes];
     newNotes[index].title = event.target.value;
-
     await updateNote(newNotes[index]._id,newNotes[index].title,notes[index].text)
 
     setNotes(newNotes);
+
+    }
   };
 
   const handleTextChange = async(index, event) => {
@@ -163,6 +189,16 @@ function Home(userDetails) {
     
     if(status){
 
+      toast.success('Note was addded successfully!', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+
       const newNotes = [...notes];
       newNotes.push({ ...newNote });
       setNotes(newNotes);
@@ -180,7 +216,21 @@ function Home(userDetails) {
         textInput.innerText = "Note";
       }
 
+    }else{
+
+      toast.error('Something went wrong!', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+
     }
+
+
 
 
   };
@@ -191,11 +241,34 @@ function Home(userDetails) {
 
     if(status){
 
+      toast.success('Note was deleted successfully!', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+
       const updatedNotes = [...notes];
       updatedNotes.splice(index, 1);
       setNotes(updatedNotes);
 
+    }else{
+
+      toast.error('Something went wrong!', {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+
     }
+
   };
 
   const logout = () => {
@@ -283,6 +356,7 @@ function Home(userDetails) {
           <Autocomplete
             value={value}
             onChange={(event, newValue) => {
+              console.log(newValue)
               if (typeof newValue === 'string') {
                 setValue({
                   name: newValue,
@@ -291,11 +365,13 @@ function Home(userDetails) {
                 setValue({
                   name: newValue.inputValue,
                 });
+              }else if (newValue==null) {
+                setValue({
+                  name: '',
+                });
               } else {
                 setValue(newValue);
               }
-
-              console.log(newValue)
             }}
             filterOptions={(options, params) => {
               const filtered = filter(options, params);
@@ -368,7 +444,10 @@ function Home(userDetails) {
                 setCategorySearch(newValue);
               } else if (newValue && newValue.inputValue) {
                 setCategorySearch(newValue.inputValue);
-              } else {
+              }else if (newValue==null) {
+                setCategorySearch('');
+              }
+               else {
                 setCategorySearch(newValue);
               }
               handleCategorySearch(newValue)
@@ -430,8 +509,9 @@ function Home(userDetails) {
                   <DeleteIcon fontSize="inherit" />
                 </IconButton>
               </span>
+              {note.category!=='' && (
               <Chip className='note-chip' label={note.category} color="primary" />
-
+              )}
             </div>
                     
           </div> 
@@ -466,8 +546,9 @@ function Home(userDetails) {
               <div style={{ marginTop: '13px' }}></div>
 
                 <div className='note-actions'>
+                {note.category!=='' && (
                   <Chip className='note-chip' label={note.category} color="primary" />
-
+                )}
                 </div>
                         
               </div> 
